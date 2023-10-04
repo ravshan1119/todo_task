@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:todo_task/ui/calendar/widgets/month_item.dart';
+import 'package:todo_task/ui/calendar/widgets/calendar.dart';
 import 'package:todo_task/ui/calendar/widgets/schedule_item.dart';
 import 'package:todo_task/ui/calendar/widgets/todo_item.dart';
-import 'package:todo_task/ui/calendar/widgets/week_days.dart';
 import 'package:todo_task/utils/app_icons.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
@@ -14,6 +13,7 @@ class CalendarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         centerTitle: true,
         toolbarHeight: 72,
         title: Column(
@@ -57,17 +57,26 @@ class CalendarScreen extends StatelessWidget {
       body: ListView(
         children: [
           36.ph,
-          const MonthItem(),
-          19.ph,
-          const WeekDays(),
-          228.ph,
-          const ScheduleItem(),
+          // const MonthItem(),
+          // 19.ph,
+          // const WeekDays(),
+          // 19.ph,
+          CustomCalendarDate(
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1950),
+              lastDate: DateTime(2950),
+              onDateChanged: (v) {}),
+          ScheduleItem(onTap: (){},),
           18.ph,
           ...List.generate(
             3,
             (index) => const Padding(
               padding: EdgeInsets.symmetric(horizontal: 28),
-              child: TodoItem(),
+              child: TodoItem(
+                title: "Watching Football ",
+                subTitle: "Manchester United vs Arsenal (Premiere League)",
+                time: "17:00 - 18:30",
+              ),
             ),
           )
         ],

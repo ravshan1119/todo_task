@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo_task/utils/app_colors.dart';
 class ScheduleItem extends StatelessWidget {
-  const ScheduleItem({super.key});
+  const ScheduleItem({super.key, required this.onTap});
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class ScheduleItem extends StatelessWidget {
               color: AppColors.c_009FEE,
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
-                onTap: (){},
+                onTap: onTap,
                 child: const Center(
                   child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 22,vertical: 8),

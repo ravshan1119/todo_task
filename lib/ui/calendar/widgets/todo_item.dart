@@ -5,7 +5,11 @@ import 'package:todo_task/utils/app_icons.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
 class TodoItem extends StatelessWidget {
-  const TodoItem({super.key});
+  const TodoItem({super.key, required this.title, required this.subTitle, required this.time, this.location=""});
+  final String title;
+  final String subTitle;
+  final String time;
+  final String location;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +36,9 @@ class TodoItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Watching Football ",
-                  style: TextStyle(
+                Text(
+                  title,
+                  style: const TextStyle(
                     fontFamily: "Poppins",
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -43,9 +47,9 @@ class TodoItem extends StatelessWidget {
                   ),
                   textAlign: TextAlign.left,
                 ),
-                const Text(
-                  "Manchester United vs Arsenal (Premiere League)",
-                  style: TextStyle(
+                Text(
+                  subTitle,
+                  style: const TextStyle(
                     fontFamily: "Poppins",
                     fontSize: 8,
                     fontWeight: FontWeight.w400,
@@ -59,9 +63,9 @@ class TodoItem extends StatelessWidget {
                   children: [
                     SvgPicture.asset(AppIcons.timeIcon),
                     4.pw,
-                    const Text(
-                      "17:00 - 18:30",
-                      style: TextStyle(
+                    Text(
+                      time,
+                      style: const TextStyle(
                         fontFamily: "Poppins",
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -71,11 +75,11 @@ class TodoItem extends StatelessWidget {
                       textAlign: TextAlign.left,
                     ),
                     10.pw,
-                    SvgPicture.asset(AppIcons.location),
+                    location.isEmpty?const Text(""):SvgPicture.asset(AppIcons.location),
                     4.pw,
-                    const Text(
-                      "Stamford Bridge",
-                      style: TextStyle(
+                    Text(
+                      location,
+                      style: const TextStyle(
                         fontFamily: "Poppins",
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -90,6 +94,7 @@ class TodoItem extends StatelessWidget {
             ),
           ),
         ),
+        14.ph,
       ],
     );
   }
