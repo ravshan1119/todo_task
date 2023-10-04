@@ -1,9 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_task/ui/app_routes.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'package:device_preview/device_preview.dart';
+
+void main() => runApp(
+      DevicePreview(
+        enabled: !kReleaseMode,
+        builder: (context) => const MyApp(), // Wrap your app
+      ),
+    );
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,11 +17,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    debugShowCheckedModeBanner: false,
+      useInheritedMediaQuery: true,
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
+      darkTheme: ThemeData.dark(),
       initialRoute: RouteNames.calendar,
       onGenerateRoute: AppRoutes.generateRoute,
     );
