@@ -11,4 +11,5 @@ class AppIcons {
   static String timeIcon = "assets/svg/time_icon.svg";
   static String notification = "assets/svg/notification.svg";
   static String yellowDot = "assets/svg/yellow_dot.svg";
+  static String arrowDownBlue = "assets/svg/arrow_down_blue.svg";
 }
