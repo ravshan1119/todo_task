@@ -13,9 +13,10 @@ class TodoCubit extends Cubit<TodoState> {
     emit(state.copyWith(status: FormStatus.loading));
     showLoading(context: context);
     if (canAddTodo().isEmpty) {
+      await LocalDatabase.insertTodo(eventModel);
+    } else {
       errorDialog(context, "Maydonlar toliq emas!");
     }
-    await LocalDatabase.insertTodo(eventModel);
 
     hideLoading(context: context);
 

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:todo_task/cubit/todo/todo_cubit.dart';
 import 'package:todo_task/cubit/todo/todo_state.dart';
+import 'package:todo_task/data/local/local_database.dart';
 import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/ui/app_routes.dart';
 import 'package:todo_task/ui/todo_add/widgets/drop_down.dart';
@@ -67,7 +68,8 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     4.ph,
                     GlobalTextField(
                       onChanged: (v) {
-                        state.copyWith(eventName: v);
+                        debugPrint(state.eventName);
+                        state.copyWith(eventName: v.toString());
                       },
                       hintText: "Event name",
                       controller: eventNameController,
@@ -169,23 +171,35 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
                       onTap: () {
-                        context.read<TodoCubit>().addTodo(
-                              context,
-                              EventModel(
-                                eventLocation: eventLocationController.text,
-                                eventName: eventNameController.text,
-                                eventPriority: "easy",
-                                eventDescription:
-                                    eventDescriptionController.text,
-                                eventTime: eventTimeController.text,
-                              ),
-                            );
-                        if (state.status == FormStatus.success) {
-                          Navigator.pushReplacementNamed(
-                              context, RouteNames.calendar);
-                        }else{
-                          errorDialog(context, state.errorText);
-                        }
+                        LocalDatabase.insertTodo(
+                          EventModel(
+                            eventLocation: eventLocationController.text,
+                            eventName: eventNameController.text,
+                            eventPriority: "easy",
+                            eventDescription: eventDescriptionController.text,
+                            eventTime: eventTimeController.text,
+                          ),
+                        );
+                        Navigator.pushReplacementNamed(
+                            context, RouteNames.calendar);
+
+                        // context.read<TodoCubit>().addTodo(
+                        //       context,
+                        //       EventModel(
+                        //         eventLocation: eventLocationController.text,
+                        //         eventName: eventNameController.text,
+                        //         eventPriority: "easy",
+                        //         eventDescription:
+                        //             eventDescriptionController.text,
+                        //         eventTime: eventTimeController.text,
+                        //       ),
+                        //     );
+                        // if (state.status == FormStatus.success) {
+                        //   Navigator.pushReplacementNamed(
+                        //       context, RouteNames.calendar);
+                        // } else {
+                        //   errorDialog(context, state.errorText);
+                        // }
                       },
                       child: const Center(
                         child: Padding(

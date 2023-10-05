@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/utils/form_status.dart';
 
 class TodoState extends Equatable {

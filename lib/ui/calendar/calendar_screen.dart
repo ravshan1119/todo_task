@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:todo_task/cubit/todo/todo_cubit.dart';
-import 'package:todo_task/cubit/todo/todo_state.dart';
-import 'package:todo_task/data/local/local_database.dart';
+import 'package:todo_task/cubit/todos/todos_cubit.dart';
+import 'package:todo_task/cubit/todos/todos_state.dart';
 import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/ui/app_routes.dart';
 import 'package:todo_task/ui/calendar/widgets/calendar.dart';
 import 'package:todo_task/ui/calendar/widgets/schedule_item.dart';
 import 'package:todo_task/ui/calendar/widgets/todo_item.dart';
 import 'package:todo_task/utils/app_icons.dart';
-import 'package:todo_task/utils/form_status.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -37,7 +35,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   List<EventModel> events = [];
 
   void init() async {
-    events = await LocalDatabase.getAllTodos();
+    context.read<TodosCubit>().getTodos();
   }
 
   @override
@@ -49,57 +47,52 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     init();
-    return BlocBuilder<TodoCubit, TodoState>(
-      builder: (context, state) {
-        if (state.status == FormStatus.loading) {
-          const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        return Scaffold(
-          appBar: AppBar(
-            scrolledUnderElevation: 0,
-            centerTitle: true,
-            toolbarHeight: 72,
-            title: Column(
-              children: [
-                Text(
-                  day,
-                  style: const TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff292929),
-                    height: 21 / 14,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  width: 200,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        DateTime.now().toString(),
-                        style: const TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 10,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff292929),
-                          height: 15 / 10,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      4.pw,
-                      SvgPicture.asset(AppIcons.arrowBottom)
-                    ],
-                  ),
-                )
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        toolbarHeight: 72,
+        title: Column(
+          children: [
+            Text(
+              day,
+              style: const TextStyle(
+                fontFamily: "Poppins",
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xff292929),
+                height: 21 / 14,
+              ),
+              textAlign: TextAlign.center,
             ),
-            actions: [SvgPicture.asset(AppIcons.notification), 28.pw],
-          ),
-          body: ListView(
+            SizedBox(
+              width: 200,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    DateTime.now().toString(),
+                    style: const TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xff292929),
+                      height: 15 / 10,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  4.pw,
+                  SvgPicture.asset(AppIcons.arrowBottom)
+                ],
+              ),
+            )
+          ],
+        ),
+        actions: [SvgPicture.asset(AppIcons.notification), 28.pw],
+      ),
+      body: BlocBuilder<TodosCubit, TodosState>(
+        builder: (context, state) {
+          return ListView(
             children: [
               36.ph,
               // const MonthItem(),
@@ -166,20 +159,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
               18.ph,
               ...List.generate(
-                events.length,
+                state.todos.length,
                 (index) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: TodoItem(
-                    title: events[index].eventName,
-                    subTitle: events[index].eventDescription,
-                    time: events[index].eventTime,
+                    title: state.todos[index].eventName,
+                    subTitle: state.todos[index].eventDescription,
+                    time: state.todos[index].eventTime,
                   ),
                 ),
               )
             ],
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
