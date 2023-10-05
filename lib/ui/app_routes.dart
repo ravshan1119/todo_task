@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:todo_task/ui/calendar/calendar_screen.dart';
+import 'package:todo_task/ui/details/detail_screen.dart';
 import 'package:todo_task/ui/todo_add/todo_add_screen.dart';
 
 class RouteNames {
   static const String calendar = "/";
   static const String todoAdd = "/todo_add_screen";
+  static const String detail = "/detail_screen";
 }
 
 class AppRoutes {
@@ -17,6 +19,10 @@ class AppRoutes {
         case RouteNames.todoAdd:
         return MaterialPageRoute(
           builder: (context) => const TodoAddScreen(),
+        );
+        case RouteNames.detail:
+        return MaterialPageRoute(
+          builder: (context) => const DetailScreen(),
         );
       default:
         return MaterialPageRoute(
