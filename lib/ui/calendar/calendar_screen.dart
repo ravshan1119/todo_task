@@ -1,13 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:todo_task/ui/app_routes.dart';
 import 'package:todo_task/ui/calendar/widgets/calendar.dart';
 import 'package:todo_task/ui/calendar/widgets/schedule_item.dart';
 import 'package:todo_task/ui/calendar/widgets/todo_item.dart';
 import 'package:todo_task/utils/app_icons.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
+
+  @override
+  State<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+class _CalendarScreenState extends State<CalendarScreen> {
+  String day = DateTime.now().weekday == 0
+      ? "Monday"
+      : DateTime.now().weekday == 1
+          ? "Tuesday"
+          : DateTime.now().weekday == 2
+              ? "Wednesday"
+              : DateTime.now().weekday == 3
+                  ? "Tuesday"
+                  : DateTime.now().weekday == 4
+                      ? "Friday"
+                      : DateTime.now().weekday == 5
+                          ? "Saturday"
+                          : "Sunday";
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +38,9 @@ class CalendarScreen extends StatelessWidget {
         toolbarHeight: 72,
         title: Column(
           children: [
-            const Text(
-              "Sunday",
-              style: TextStyle(
+            Text(
+              day,
+              style: const TextStyle(
                 fontFamily: "Poppins",
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -34,9 +54,9 @@ class CalendarScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "28 September 2021",
-                    style: TextStyle(
+                  Text(
+                    DateTime.now().toString(),
+                    style: const TextStyle(
                       fontFamily: "Poppins",
                       fontSize: 10,
                       fontWeight: FontWeight.w400,
@@ -65,8 +85,60 @@ class CalendarScreen extends StatelessWidget {
               initialDate: DateTime.now(),
               firstDate: DateTime(1950),
               lastDate: DateTime(2950),
-              onDateChanged: (v) {}),
-          ScheduleItem(onTap: (){},),
+              onDateChanged: (v) {
+                setState(() {
+                  switch (v.weekday) {
+                    case 0:
+                      {
+                        day = "Monday";
+                      }
+                      break;
+
+                    case 1:
+                      {
+                        day = "Tuesday";
+                      }
+                      break;
+                    case 2:
+                      {
+                        day = "Wednesday";
+                      }
+                      break;
+
+                    case 3:
+                      {
+                        day = "Thursday";
+                      }
+                      break;
+                    case 4:
+                      {
+                        day = "Friday";
+                      }
+                      break;
+                    case 5:
+                      {
+                        day = "Saturday";
+                      }
+                      break;
+                    case 6:
+                      {
+                        day = "Sunday";
+                      }
+                      break;
+
+                    default:
+                      {
+                        //statements;
+                      }
+                      break;
+                  }
+                });
+              }),
+          ScheduleItem(
+            onTap: () {
+              Navigator.pushNamed(context, RouteNames.todoAdd);
+            },
+          ),
           18.ph,
           ...List.generate(
             3,
