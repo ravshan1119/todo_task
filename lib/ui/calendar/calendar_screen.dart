@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:todo_task/cubit/todos/todos_cubit.dart';
 import 'package:todo_task/cubit/todos/todos_state.dart';
-import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/ui/app_routes.dart';
 import 'package:todo_task/ui/calendar/widgets/calendar.dart';
 import 'package:todo_task/ui/calendar/widgets/schedule_item.dart';
@@ -32,21 +31,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       : DateTime.now().weekday == 5
                           ? "Saturday"
                           : "Sunday";
-  List<EventModel> events = [];
+  bool isVisible = true;
 
-  void init() async {
+  @override
+  void initState() {
+    _getTodos();
+    super.initState();
+  }
+
+  _getTodos() {
     context.read<TodosCubit>().getTodos();
   }
 
   @override
-  void initState() {
-    init();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    init();
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -82,7 +80,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     textAlign: TextAlign.center,
                   ),
                   4.pw,
-                  SvgPicture.asset(AppIcons.arrowBottom)
+                  GestureDetector(
+                    onTap: () {
+                      isVisible = !isVisible;
+                      setState(() {});
+                    },
+                    child: isVisible
+                        ? const Icon(Icons.keyboard_arrow_up)
+                        : const Icon(Icons.keyboard_arrow_down),
+                  )
                 ],
               ),
             )
@@ -95,63 +101,62 @@ class _CalendarScreenState extends State<CalendarScreen> {
           return ListView(
             children: [
               36.ph,
-              // const MonthItem(),
-              // 19.ph,
-              // const WeekDays(),
-              // 19.ph,
-              CustomCalendarDate(
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1950),
-                  lastDate: DateTime(2950),
-                  onDateChanged: (v) {
-                    setState(() {
-                      switch (v.weekday) {
-                        case 0:
-                          {
-                            day = "Monday";
-                          }
-                          break;
+              Visibility(
+                visible: isVisible,
+                child: CustomCalendarDate(
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1950),
+                    lastDate: DateTime(2950),
+                    onDateChanged: (v) {
+                      setState(() {
+                        switch (v.weekday) {
+                          case 0:
+                            {
+                              day = "Monday";
+                            }
+                            break;
 
-                        case 1:
-                          {
-                            day = "Tuesday";
-                          }
-                          break;
-                        case 2:
-                          {
-                            day = "Wednesday";
-                          }
-                          break;
+                          case 1:
+                            {
+                              day = "Tuesday";
+                            }
+                            break;
+                          case 2:
+                            {
+                              day = "Wednesday";
+                            }
+                            break;
 
-                        case 3:
-                          {
-                            day = "Thursday";
-                          }
-                          break;
-                        case 4:
-                          {
-                            day = "Friday";
-                          }
-                          break;
-                        case 5:
-                          {
-                            day = "Saturday";
-                          }
-                          break;
-                        case 6:
-                          {
-                            day = "Sunday";
-                          }
-                          break;
+                          case 3:
+                            {
+                              day = "Thursday";
+                            }
+                            break;
+                          case 4:
+                            {
+                              day = "Friday";
+                            }
+                            break;
+                          case 5:
+                            {
+                              day = "Saturday";
+                            }
+                            break;
+                          case 6:
+                            {
+                              day = "Sunday";
+                            }
+                            break;
 
-                        default:
-                          {
-                            //statements;
-                          }
-                          break;
-                      }
-                    });
-                  }),
+                          default:
+                            {
+                              //statements;
+                            }
+                            break;
+                        }
+                      });
+                    }),
+              ),
               ScheduleItem(
                 onTap: () {
                   Navigator.pushNamed(context, RouteNames.todoAdd);

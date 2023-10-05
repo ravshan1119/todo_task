@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:todo_task/cubit/todo/todo_cubit.dart';
-import 'package:todo_task/cubit/todo/todo_state.dart';
-import 'package:todo_task/data/local/local_database.dart';
-import 'package:todo_task/data/model/event_model.dart';
+import 'package:todo_task/cubit/todos/todos_cubit.dart';
+import 'package:todo_task/cubit/todos/todos_state.dart';
 import 'package:todo_task/ui/app_routes.dart';
-import 'package:todo_task/ui/todo_add/widgets/drop_down.dart';
 import 'package:todo_task/ui/todo_add/widgets/input.dart';
 import 'package:todo_task/utils/app_colors.dart';
 import 'package:todo_task/utils/app_icons.dart';
@@ -22,10 +19,9 @@ class TodoAddScreen extends StatefulWidget {
 }
 
 class _TodoAddScreenState extends State<TodoAddScreen> {
-  TextEditingController eventNameController = TextEditingController();
-  TextEditingController eventLocationController = TextEditingController();
-  TextEditingController eventDescriptionController = TextEditingController();
-  TextEditingController eventTimeController = TextEditingController();
+  List<String> list = <String>['0xFFC6E6F6', '0xFFF6CFC6', '0xFFF6E3C6'];
+  String dropdownValue = "";
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +29,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
       ),
-      body: BlocConsumer<TodoCubit, TodoState>(
+      body: BlocConsumer<TodosCubit, TodosState>(
         listener: (context, state) {
           if (state.status == FormStatus.loading) {
             const Center(
@@ -42,7 +38,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
           }
           if (state.status == FormStatus.failure) {
             if (state.status == FormStatus.failure) {
-              errorDialog(context, state.errorText);
+              errorDialog(context, state.error);
             }
           }
         },
@@ -68,11 +64,9 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     4.ph,
                     GlobalTextField(
                       onChanged: (v) {
-                        debugPrint(state.eventName);
                         state.copyWith(eventName: v.toString());
                       },
                       hintText: "Event name",
-                      controller: eventNameController,
                     ),
                     16.ph,
                     const Text(
@@ -88,11 +82,10 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     ),
                     GlobalTextField(
                       onChanged: (v) {
-                        state.copyWith(eventDescription: v);
+                        state.copyWith(eventDescription: v.toString());
                       },
                       hintText: "Event description",
                       maxLines: 5,
-                      controller: eventDescriptionController,
                     ),
                     16.ph,
                     const Text(
@@ -109,8 +102,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     4.ph,
                     GlobalTextField(
                       onChanged: (v) {
-                        print(v);
-                        state.copyWith(eventLocation: v);
+                        state.copyWith(eventLocation: v.toString());
                       },
                       suffixIcon: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -118,7 +110,6 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                         child: SvgPicture.asset(AppIcons.location),
                       ),
                       hintText: "Event location",
-                      controller: eventLocationController,
                     ),
                     16.ph,
                     const Text(
@@ -133,7 +124,28 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                       textAlign: TextAlign.left,
                     ),
                     6.ph,
-                    const DropdownItem(),
+                    DropdownMenu<String>(
+                      // width: 75,
+                      menuStyle: MenuStyle(
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith((states) {
+                          if (states.contains(MaterialState.pressed)) {
+                            return AppColors.grey100;
+                          }
+                          return AppColors.grey100;
+                        }),
+                      ),
+                      trailingIcon: SvgPicture.asset(AppIcons.arrowDownBlue),
+                      initialSelection: list.first,
+                      onSelected: (String? value) {
+                        state.copyWith(eventPriority: value.toString());
+                      },
+                      dropdownMenuEntries:
+                          list.map<DropdownMenuEntry<String>>((String value) {
+                        return DropdownMenuEntry<String>(
+                            value: value, label: value);
+                      }).toList(),
+                    ),
                     const Text(
                       "Event time",
                       style: TextStyle(
@@ -148,10 +160,9 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     4.ph,
                     GlobalTextField(
                       onChanged: (v) {
-                        state.copyWith(eventTime: v);
+                        state.copyWith(eventTime: v.toString());
                       },
                       hintText: "Event time",
-                      controller: eventTimeController,
                     ),
                     150.ph,
                   ],
@@ -171,35 +182,13 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
                       onTap: () {
-                        LocalDatabase.insertTodo(
-                          EventModel(
-                            eventLocation: eventLocationController.text,
-                            eventName: eventNameController.text,
-                            eventPriority: "easy",
-                            eventDescription: eventDescriptionController.text,
-                            eventTime: eventTimeController.text,
-                          ),
-                        );
+                        debugPrint(state.eventPriority);
+                        debugPrint(state.eventLocation);
+                        debugPrint(state.eventDescription);
+                        debugPrint(state.eventTime);
+                        debugPrint(state.eventName);
                         Navigator.pushReplacementNamed(
                             context, RouteNames.calendar);
-
-                        // context.read<TodoCubit>().addTodo(
-                        //       context,
-                        //       EventModel(
-                        //         eventLocation: eventLocationController.text,
-                        //         eventName: eventNameController.text,
-                        //         eventPriority: "easy",
-                        //         eventDescription:
-                        //             eventDescriptionController.text,
-                        //         eventTime: eventTimeController.text,
-                        //       ),
-                        //     );
-                        // if (state.status == FormStatus.success) {
-                        //   Navigator.pushReplacementNamed(
-                        //       context, RouteNames.calendar);
-                        // } else {
-                        //   errorDialog(context, state.errorText);
-                        // }
                       },
                       child: const Center(
                         child: Padding(
