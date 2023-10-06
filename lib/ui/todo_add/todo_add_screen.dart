@@ -14,7 +14,9 @@ import 'package:todo_task/utils/form_status.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
 class TodoAddScreen extends StatefulWidget {
-  const TodoAddScreen({super.key});
+  const TodoAddScreen({super.key, this.newEventModel});
+
+  final EventModel? newEventModel;
 
   @override
   State<TodoAddScreen> createState() => _TodoAddScreenState();
@@ -27,6 +29,18 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
   TextEditingController eventDescriptionController = TextEditingController();
   TextEditingController eventLocationController = TextEditingController();
   TextEditingController eventTimeController = TextEditingController();
+
+  @override
+  void initState() {
+    if (widget.newEventModel != null) {
+      eventTimeController.text = widget.newEventModel!.eventTime;
+      eventDescriptionController.text = widget.newEventModel!.eventDescription;
+      eventNameController.text = widget.newEventModel!.eventName;
+      eventLocationController.text = widget.newEventModel!.eventLocation;
+      selectedColor = widget.newEventModel!.eventPriority;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,28 +210,43 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
                       onTap: () {
-                        context.read<TodosBloc>().add(
-                              AddTodo(
-                                newTodo: EventModel(
-                                  eventLocation: eventLocationController.text,
-                                  eventName: eventNameController.text,
-                                  eventPriority: selectedColor.toString(),
-                                  eventDescription:
-                                      eventDescriptionController.text,
-                                  eventTime: eventTimeController.text,
+                        if (widget.newEventModel == null) {
+                          context.read<TodosBloc>().add(
+                                AddTodo(
+                                  newTodo: EventModel(
+                                    eventLocation: eventLocationController.text,
+                                    eventName: eventNameController.text,
+                                    eventPriority: selectedColor.toString(),
+                                    eventDescription:
+                                        eventDescriptionController.text,
+                                    eventTime: eventTimeController.text,
+                                  ),
                                 ),
+                              );
+                        } else {
+                          context.read<TodosBloc>().add(
+                            UpdateTodo(
+                              updatedTodo: EventModel(
+                                eventLocation: eventLocationController.text,
+                                eventName: eventNameController.text,
+                                eventPriority: selectedColor.toString(),
+                                eventDescription:
+                                eventDescriptionController.text,
+                                eventTime: eventTimeController.text,
                               ),
-                            );
-                        Navigator.pop(
-                            context, RouteNames.calendar);
+                            ),
+                          );
+
+                        }
+                        Navigator.pop(context, RouteNames.calendar);
                       },
-                      child: const Center(
+                      child: Center(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 25, vertical: 13),
                           child: Text(
-                            "Add",
-                            style: TextStyle(
+                            widget.newEventModel == null ? "Add" : "Update",
+                            style: const TextStyle(
                               fontFamily: "Poppins",
                               fontSize: 10,
                               fontWeight: FontWeight.w600,

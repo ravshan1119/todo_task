@@ -91,7 +91,11 @@ class TodoItem extends StatelessWidget {
                     10.pw,
                     location.isEmpty
                         ? const Text("")
-                        : SvgPicture.asset(AppIcons.location),
+                        : SvgPicture.asset(
+                            AppIcons.location,
+                            colorFilter:
+                                ColorFilter.mode(textColor, BlendMode.srcIn),
+                          ),
                     4.pw,
                     Text(
                       location,

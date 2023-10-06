@@ -30,7 +30,6 @@ class TodosBloc extends Bloc<TodosEvent, TodoState> {
         status: FormStatus.loading, statusText: "Adding Todo...!"));
     LocalDatabase.getInstance;
     LocalDatabase.insertTodo(event.newTodo);
-    // await Future.delayed(const Duration(seconds: 2));
     emit(state.copyWith(
         status: FormStatus.success,
         statusText: "Added Todo!",
@@ -40,7 +39,6 @@ class TodosBloc extends Bloc<TodosEvent, TodoState> {
   _getTodos(GetTodo event, Emitter<TodoState> emit) async {
     emit(state.copyWith(
         status: FormStatus.loading, statusText: "Getting Todos!"));
-    // await Future.delayed(const Duration(seconds: 2));
     List<EventModel> todos = await LocalDatabase.getAllTodos();
 
     emit(state.copyWith(
@@ -65,11 +63,6 @@ class TodosBloc extends Bloc<TodosEvent, TodoState> {
         statusText: "Deleting Todo...",
       ),
     );
-    await Future.delayed(const Duration(seconds: 2));
-
-    // List<UserModel> currentUsers = state.users;
-    //
-    // currentUsers.removeWhere((element) => element.userId == event.userId);
     LocalDatabase.deleteTodo(event.todoId);
     List<EventModel> todos = await LocalDatabase.getAllTodos();
     emit(

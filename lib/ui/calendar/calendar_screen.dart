@@ -11,6 +11,7 @@ import 'package:todo_task/ui/calendar/widgets/todo_item.dart';
 import 'package:todo_task/ui/details/detail_screen.dart';
 import 'package:todo_task/utils/app_colors.dart';
 import 'package:todo_task/utils/app_icons.dart';
+import 'package:todo_task/utils/form_status.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -102,6 +103,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       ),
       body: BlocBuilder<TodosBloc, TodoState>(
         builder: (context, state) {
+          if(state.status == FormStatus.loading){
+            const Center(child: CircularProgressIndicator(),);
+          }
           return ListView(
             children: [
               36.ph,
@@ -200,6 +204,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       title: state.todos[index].eventName,
                       subTitle: state.todos[index].eventDescription,
                       time: state.todos[index].eventTime,
+                      location: state.todos[index].eventLocation,
                     ),
                   ),
                 ),
