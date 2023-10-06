@@ -38,22 +38,22 @@ class TodoItem extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: "Poppins",
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xff056ea2),
+                    color: AppColors.c_056ea2,
                     height: 21 / 14,
                   ),
                   textAlign: TextAlign.left,
                 ),
                 Text(
                   subTitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: "Poppins",
                     fontSize: 8,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xff056ea2),
+                    color: AppColors.c_056ea2,
                     height: 12 / 8,
                   ),
                   textAlign: TextAlign.left,
@@ -65,11 +65,11 @@ class TodoItem extends StatelessWidget {
                     4.pw,
                     Text(
                       time,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: "Poppins",
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xff056ea2),
+                        color: AppColors.c_056ea2,
                         height: 15 / 10,
                       ),
                       textAlign: TextAlign.left,
@@ -79,11 +79,11 @@ class TodoItem extends StatelessWidget {
                     4.pw,
                     Text(
                       location,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: "Poppins",
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xff056ea2),
+                        color: AppColors.c_056ea2,
                         height: 15 / 10,
                       ),
                       textAlign: TextAlign.left,

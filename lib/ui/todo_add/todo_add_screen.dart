@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:todo_task/cubit/todos/todos_cubit.dart';
-import 'package:todo_task/cubit/todos/todos_state.dart';
+import 'package:todo_task/bloc/todo/todos_bloc.dart';
+import 'package:todo_task/bloc/todo/todos_event.dart';
+import 'package:todo_task/bloc/todo/todos_state.dart';
+import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/ui/app_routes.dart';
 import 'package:todo_task/ui/todo_add/widgets/input.dart';
 import 'package:todo_task/utils/app_colors.dart';
@@ -19,9 +21,16 @@ class TodoAddScreen extends StatefulWidget {
 }
 
 class _TodoAddScreenState extends State<TodoAddScreen> {
-  List<String> list = <String>['0xFFC6E6F6', '0xFFF6CFC6', '0xFFF6E3C6'];
-  String dropdownValue = "";
-
+  Color selectedColor = const Color(0xFFC6E6F6);
+  List<Color> colors = [
+    const Color(0xFFC6E6F6),
+    const Color(0xFFF6CFC6),
+    const Color(0xFFF6E3C6)
+  ];
+  TextEditingController eventNameController = TextEditingController();
+  TextEditingController eventDescriptionController = TextEditingController();
+  TextEditingController eventLocationController = TextEditingController();
+  TextEditingController eventTimeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +38,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
       ),
-      body: BlocConsumer<TodosCubit, TodosState>(
+      body: BlocConsumer<TodosBloc, TodoState>(
         listener: (context, state) {
           if (state.status == FormStatus.loading) {
             const Center(
@@ -38,7 +47,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
           }
           if (state.status == FormStatus.failure) {
             if (state.status == FormStatus.failure) {
-              errorDialog(context, state.error);
+              errorDialog(context, state.statusText);
             }
           }
         },
@@ -63,6 +72,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     ),
                     4.ph,
                     GlobalTextField(
+                      controller: eventNameController,
                       onChanged: (v) {
                         state.copyWith(eventName: v.toString());
                       },
@@ -81,6 +91,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                       textAlign: TextAlign.left,
                     ),
                     GlobalTextField(
+                      controller: eventDescriptionController,
                       onChanged: (v) {
                         state.copyWith(eventDescription: v.toString());
                       },
@@ -101,6 +112,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     ),
                     4.ph,
                     GlobalTextField(
+                      controller: eventLocationController,
                       onChanged: (v) {
                         state.copyWith(eventLocation: v.toString());
                       },
@@ -124,28 +136,29 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                       textAlign: TextAlign.left,
                     ),
                     6.ph,
-                    DropdownMenu<String>(
-                      // width: 75,
-                      menuStyle: MenuStyle(
-                        backgroundColor:
-                            MaterialStateProperty.resolveWith((states) {
-                          if (states.contains(MaterialState.pressed)) {
-                            return AppColors.grey100;
-                          }
-                          return AppColors.grey100;
-                        }),
-                      ),
-                      trailingIcon: SvgPicture.asset(AppIcons.arrowDownBlue),
-                      initialSelection: list.first,
-                      onSelected: (String? value) {
-                        state.copyWith(eventPriority: value.toString());
+                    DropdownButton<Color>(
+                      value: selectedColor,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedColor = newValue!;
+                        });
                       },
-                      dropdownMenuEntries:
-                          list.map<DropdownMenuEntry<String>>((String value) {
-                        return DropdownMenuEntry<String>(
-                            value: value, label: value);
+                      items: colors.map<DropdownMenuItem<Color>>((Color color) {
+                        return DropdownMenuItem<Color>(
+                          value: color,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 10),
+                            child: Container(
+                              width: 23,
+                              height: 20,
+                              color: color,
+                            ),
+                          ),
+                        );
                       }).toList(),
                     ),
+                    16.ph,
                     const Text(
                       "Event time",
                       style: TextStyle(
@@ -159,6 +172,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     ),
                     4.ph,
                     GlobalTextField(
+                      controller: eventTimeController,
                       onChanged: (v) {
                         state.copyWith(eventTime: v.toString());
                       },
@@ -187,24 +201,46 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                         debugPrint(state.eventDescription);
                         debugPrint(state.eventTime);
                         debugPrint(state.eventName);
+                        // context.read<TodosBloc>().add(
+                        //       AddTodo(
+                        //         newTodo: EventModel(
+                        //           eventLocation: eventLocationController.text,
+                        //           eventName: eventNameController.text,
+                        //           eventPriority: selectedColor.toString(),
+                        //           eventDescription:
+                        //               eventDescriptionController.text,
+                        //           eventTime: eventTimeController.text,
+                        //         ),
+                        //       ),
+                        //     );
+                        debugPrint(
+                          EventModel(
+                            eventLocation: eventLocationController.text,
+                            eventName: eventNameController.text,
+                            eventPriority: selectedColor.toString(),
+                            eventDescription: eventDescriptionController.text,
+                            eventTime: eventTimeController.text,
+                          ).toString(),
+                        );
                         Navigator.pushReplacementNamed(
                             context, RouteNames.calendar);
                       },
                       child: const Center(
                         child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 25, vertical: 13),
-                            child: Text(
-                              "Add",
-                              style: TextStyle(
-                                fontFamily: "Poppins",
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                height: 15 / 10,
-                              ),
-                              textAlign: TextAlign.left,
-                            )),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 25, vertical: 13),
+                          child: Text(
+                            "Add",
+                            style: TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              height: 15 / 10,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
                       ),
                     ),
                   ),

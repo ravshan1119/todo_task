@@ -1,10 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_task/cubit/todos/todos_cubit.dart';
+import 'package:todo_task/bloc/todo/todos_event.dart';
 import 'package:todo_task/ui/app_routes.dart';
 
 import 'package:device_preview/device_preview.dart';
+
+import 'bloc/todo/todos_bloc.dart';
 
 void main() => runApp(
       DevicePreview(
@@ -20,8 +22,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<TodosCubit>(
-          create: (context) => TodosCubit(),
+        BlocProvider<TodosBloc>(
+          create: (context) => TodosBloc()..add(GetTodo()),
         ),
       ],
       child: MaterialApp(

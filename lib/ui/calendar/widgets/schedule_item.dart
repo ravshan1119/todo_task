@@ -11,13 +11,13 @@ class ScheduleItem extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+          Text(
             "Schedule",
             style: TextStyle(
               fontFamily: "Poppins",
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Color(0xff292929),
+              color: AppColors.c_292929,
               height: 21 / 14,
             ),
             textAlign: TextAlign.left,
@@ -32,16 +32,16 @@ class ScheduleItem extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
                 onTap: onTap,
-                child: const Center(
+                child: Center(
                   child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 22,vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 22,vertical: 8),
                       child: Text(
                         "+ Add Event",
                         style: TextStyle(
                           fontFamily: "Poppins",
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: AppColors.white,
                           height: 15/10,
                         ),
                         textAlign: TextAlign.left,

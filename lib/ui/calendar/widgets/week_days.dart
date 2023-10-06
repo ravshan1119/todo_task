@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:todo_task/utils/app_colors.dart';
+
 class WeekDays extends StatelessWidget {
   const WeekDays({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 28),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -15,7 +17,7 @@ class WeekDays extends StatelessWidget {
               fontFamily: "Poppins",
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Color(0xff969696),
+              color: AppColors.c_969696,
               height: 18 / 12,
             ),
             textAlign: TextAlign.left,
@@ -26,7 +28,7 @@ class WeekDays extends StatelessWidget {
               fontFamily: "Poppins",
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Color(0xff969696),
+              color: AppColors.c_969696,
               height: 18 / 12,
             ),
             textAlign: TextAlign.left,
@@ -37,7 +39,7 @@ class WeekDays extends StatelessWidget {
               fontFamily: "Poppins",
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Color(0xff969696),
+              color: AppColors.c_969696,
               height: 18 / 12,
             ),
             textAlign: TextAlign.left,
@@ -48,7 +50,7 @@ class WeekDays extends StatelessWidget {
               fontFamily: "Poppins",
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Color(0xff969696),
+              color: AppColors.c_969696,
               height: 18 / 12,
             ),
             textAlign: TextAlign.left,
@@ -59,7 +61,7 @@ class WeekDays extends StatelessWidget {
               fontFamily: "Poppins",
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Color(0xff969696),
+              color: AppColors.c_969696,
               height: 18 / 12,
             ),
             textAlign: TextAlign.left,
@@ -70,7 +72,7 @@ class WeekDays extends StatelessWidget {
               fontFamily: "Poppins",
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Color(0xff969696),
+              color: AppColors.c_969696,
               height: 18 / 12,
             ),
             textAlign: TextAlign.left,
@@ -81,7 +83,7 @@ class WeekDays extends StatelessWidget {
               fontFamily: "Poppins",
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Color(0xff969696),
+              color: AppColors.c_969696,
               height: 18 / 12,
             ),
             textAlign: TextAlign.left,

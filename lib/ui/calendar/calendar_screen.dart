@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:todo_task/cubit/todos/todos_cubit.dart';
-import 'package:todo_task/cubit/todos/todos_state.dart';
+import 'package:todo_task/bloc/todo/todos_bloc.dart';
+import 'package:todo_task/bloc/todo/todos_event.dart';
+import 'package:todo_task/bloc/todo/todos_state.dart';
 import 'package:todo_task/ui/app_routes.dart';
 import 'package:todo_task/ui/calendar/widgets/calendar.dart';
 import 'package:todo_task/ui/calendar/widgets/schedule_item.dart';
 import 'package:todo_task/ui/calendar/widgets/todo_item.dart';
+import 'package:todo_task/utils/app_colors.dart';
 import 'package:todo_task/utils/app_icons.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
@@ -40,11 +42,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   _getTodos() {
-    context.read<TodosCubit>().getTodos();
+    context.read<TodosBloc>().add(GetTodo());
   }
 
   @override
   Widget build(BuildContext context) {
+    _getTodos();
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -54,11 +57,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
           children: [
             Text(
               day,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: "Poppins",
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Color(0xff292929),
+                color: AppColors.c_292929,
                 height: 21 / 14,
               ),
               textAlign: TextAlign.center,
@@ -70,11 +73,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 children: [
                   Text(
                     DateTime.now().toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: "Poppins",
                       fontSize: 10,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xff292929),
+                      color: AppColors.c_292929,
                       height: 15 / 10,
                     ),
                     textAlign: TextAlign.center,
@@ -96,7 +99,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ),
         actions: [SvgPicture.asset(AppIcons.notification), 28.pw],
       ),
-      body: BlocBuilder<TodosCubit, TodosState>(
+      body: BlocBuilder<TodosBloc, TodoState>(
         builder: (context, state) {
           return ListView(
             children: [
