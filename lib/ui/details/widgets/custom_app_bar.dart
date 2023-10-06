@@ -90,16 +90,21 @@ class CustomAppBar extends StatelessWidget {
               ),
               textAlign: TextAlign.left,
             ),
-            Text(
-              eventModel.eventDescription,
-              style: TextStyle(
-                fontFamily: "Poppins",
-                fontSize: 8,
-                fontWeight: FontWeight.w400,
-                color: AppColors.white,
-                height: 12 / 8,
+            SizedBox(
+              height: 70,
+              child: Text(
+                eventModel.eventDescription,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 6,
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontSize: 8,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.white,
+                  height: 12 / 8,
+                ),
+                textAlign: TextAlign.left,
               ),
-              textAlign: TextAlign.left,
             ),
             10.ph,
             Row(

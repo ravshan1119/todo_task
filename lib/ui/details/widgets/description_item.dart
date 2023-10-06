@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:todo_task/utils/app_colors.dart';
 import 'package:todo_task/utils/size_extantion.dart';
+
 class DescriptionItem extends StatelessWidget {
   const DescriptionItem({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return           ListView(
+    return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 28),
       children: [
         SizedBox(
