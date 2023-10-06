@@ -21,12 +21,8 @@ class TodoAddScreen extends StatefulWidget {
 }
 
 class _TodoAddScreenState extends State<TodoAddScreen> {
-  Color selectedColor = const Color(0xFFC6E6F6);
-  List<Color> colors = [
-    const Color(0xFFC6E6F6),
-    const Color(0xFFF6CFC6),
-    const Color(0xFFF6E3C6)
-  ];
+  String selectedColor = 'Red';
+  List<String> colors = ['Red', 'Blue', 'Orange'];
   TextEditingController eventNameController = TextEditingController();
   TextEditingController eventDescriptionController = TextEditingController();
   TextEditingController eventLocationController = TextEditingController();
@@ -136,23 +132,27 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                       textAlign: TextAlign.left,
                     ),
                     6.ph,
-                    DropdownButton<Color>(
+                    DropdownButton<String>(
                       value: selectedColor,
-                      onChanged: (newValue) {
+                      onChanged: (String? newValue) {
                         setState(() {
                           selectedColor = newValue!;
                         });
                       },
-                      items: colors.map<DropdownMenuItem<Color>>((Color color) {
-                        return DropdownMenuItem<Color>(
-                          value: color,
+                      items:
+                          colors.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 10),
+                            padding: const EdgeInsets.all(4),
                             child: Container(
-                              width: 23,
                               height: 20,
-                              color: color,
+                              width: 23,
+                              color: value == "Red"
+                                  ? AppColors.c_EE2B00
+                                  : value == "Blue"
+                                      ? AppColors.c_009FEE
+                                      : AppColors.c_EE8F00,
                             ),
                           ),
                         );
@@ -196,33 +196,19 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
                       onTap: () {
-                        debugPrint(state.eventPriority);
-                        debugPrint(state.eventLocation);
-                        debugPrint(state.eventDescription);
-                        debugPrint(state.eventTime);
-                        debugPrint(state.eventName);
-                        // context.read<TodosBloc>().add(
-                        //       AddTodo(
-                        //         newTodo: EventModel(
-                        //           eventLocation: eventLocationController.text,
-                        //           eventName: eventNameController.text,
-                        //           eventPriority: selectedColor.toString(),
-                        //           eventDescription:
-                        //               eventDescriptionController.text,
-                        //           eventTime: eventTimeController.text,
-                        //         ),
-                        //       ),
-                        //     );
-                        debugPrint(
-                          EventModel(
-                            eventLocation: eventLocationController.text,
-                            eventName: eventNameController.text,
-                            eventPriority: selectedColor.toString(),
-                            eventDescription: eventDescriptionController.text,
-                            eventTime: eventTimeController.text,
-                          ).toString(),
-                        );
-                        Navigator.pushReplacementNamed(
+                        context.read<TodosBloc>().add(
+                              AddTodo(
+                                newTodo: EventModel(
+                                  eventLocation: eventLocationController.text,
+                                  eventName: eventNameController.text,
+                                  eventPriority: selectedColor.toString(),
+                                  eventDescription:
+                                      eventDescriptionController.text,
+                                  eventTime: eventTimeController.text,
+                                ),
+                              ),
+                            );
+                        Navigator.pop(
                             context, RouteNames.calendar);
                       },
                       child: const Center(

@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:todo_task/utils/app_colors.dart';
 import 'package:todo_task/utils/app_icons.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
 class TodoItem extends StatelessWidget {
-  const TodoItem({super.key, required this.title, required this.subTitle, required this.time, this.location=""});
+  const TodoItem(
+      {super.key,
+      required this.title,
+      required this.subTitle,
+      required this.time,
+      this.location = "",
+      required this.color,
+      required this.subColor,
+      required this.textColor});
+
   final String title;
   final String subTitle;
   final String time;
   final String location;
+  final Color color;
+  final Color subColor;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +30,7 @@ class TodoItem extends StatelessWidget {
           height: 10,
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.c_009FEE,
+              color: color,
               borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(10), topLeft: Radius.circular(10)),
             ),
@@ -30,7 +41,7 @@ class TodoItem extends StatelessWidget {
               borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(10),
                   bottomRight: Radius.circular(10)),
-              color: AppColors.c_C6E6F6),
+              color: subColor),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Column(
@@ -42,7 +53,7 @@ class TodoItem extends StatelessWidget {
                     fontFamily: "Poppins",
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.c_056ea2,
+                    color: textColor,
                     height: 21 / 14,
                   ),
                   textAlign: TextAlign.left,
@@ -53,7 +64,7 @@ class TodoItem extends StatelessWidget {
                     fontFamily: "Poppins",
                     fontSize: 8,
                     fontWeight: FontWeight.w400,
-                    color: AppColors.c_056ea2,
+                    color: textColor,
                     height: 12 / 8,
                   ),
                   textAlign: TextAlign.left,
@@ -61,7 +72,10 @@ class TodoItem extends StatelessWidget {
                 10.ph,
                 Row(
                   children: [
-                    SvgPicture.asset(AppIcons.timeIcon),
+                    SvgPicture.asset(
+                      AppIcons.timeIcon,
+                      colorFilter: ColorFilter.mode(textColor, BlendMode.srcIn),
+                    ),
                     4.pw,
                     Text(
                       time,
@@ -69,13 +83,15 @@ class TodoItem extends StatelessWidget {
                         fontFamily: "Poppins",
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.c_056ea2,
+                        color: textColor,
                         height: 15 / 10,
                       ),
                       textAlign: TextAlign.left,
                     ),
                     10.pw,
-                    location.isEmpty?const Text(""):SvgPicture.asset(AppIcons.location),
+                    location.isEmpty
+                        ? const Text("")
+                        : SvgPicture.asset(AppIcons.location),
                     4.pw,
                     Text(
                       location,
@@ -83,7 +99,7 @@ class TodoItem extends StatelessWidget {
                         fontFamily: "Poppins",
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.c_056ea2,
+                        color: textColor,
                         height: 15 / 10,
                       ),
                       textAlign: TextAlign.left,

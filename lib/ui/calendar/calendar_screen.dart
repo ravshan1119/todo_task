@@ -8,6 +8,7 @@ import 'package:todo_task/ui/app_routes.dart';
 import 'package:todo_task/ui/calendar/widgets/calendar.dart';
 import 'package:todo_task/ui/calendar/widgets/schedule_item.dart';
 import 'package:todo_task/ui/calendar/widgets/todo_item.dart';
+import 'package:todo_task/ui/details/detail_screen.dart';
 import 'package:todo_task/utils/app_colors.dart';
 import 'package:todo_task/utils/app_icons.dart';
 import 'package:todo_task/utils/size_extantion.dart';
@@ -47,7 +48,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _getTodos();
+    debugPrint("build calendar screen");
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -170,10 +171,36 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 state.todos.length,
                 (index) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),
-                  child: TodoItem(
-                    title: state.todos[index].eventName,
-                    subTitle: state.todos[index].eventDescription,
-                    time: state.todos[index].eventTime,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailScreen(eventModel: state.todos[index]),
+                        ),
+                      );
+                    },
+                    child: TodoItem(
+                      textColor: state.todos[index].eventPriority == "Blue"
+                          ? AppColors.c_056ea2
+                          : state.todos[index].eventPriority == "Orange"
+                              ? AppColors.c_b86e00
+                              : AppColors.c_c02200,
+                      subColor: state.todos[index].eventPriority == "Blue"
+                          ? AppColors.c_C6E6F6
+                          : state.todos[index].eventPriority == "Orange"
+                              ? AppColors.c_F6E3C6
+                              : AppColors.c_F6CFC6,
+                      color: state.todos[index].eventPriority == "Blue"
+                          ? AppColors.c_009FEE
+                          : state.todos[index].eventPriority == "Orange"
+                              ? AppColors.c_EE8F00
+                              : AppColors.c_EE2B00,
+                      title: state.todos[index].eventName,
+                      subTitle: state.todos[index].eventDescription,
+                      time: state.todos[index].eventTime,
+                    ),
                   ),
                 ),
               )
