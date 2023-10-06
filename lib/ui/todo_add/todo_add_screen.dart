@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:todo_task/cubit/todo/todo_cubit.dart';
-import 'package:todo_task/cubit/todo/todo_state.dart';
+import 'package:todo_task/bloc/todo/todos_bloc.dart';
+import 'package:todo_task/bloc/todo/todos_event.dart';
+import 'package:todo_task/bloc/todo/todos_state.dart';
 import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/ui/app_routes.dart';
-import 'package:todo_task/ui/todo_add/widgets/drop_down.dart';
 import 'package:todo_task/ui/todo_add/widgets/input.dart';
 import 'package:todo_task/utils/app_colors.dart';
 import 'package:todo_task/utils/app_icons.dart';
@@ -14,17 +14,33 @@ import 'package:todo_task/utils/form_status.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
 class TodoAddScreen extends StatefulWidget {
-  const TodoAddScreen({super.key});
+  const TodoAddScreen({super.key, this.newEventModel});
+
+  final EventModel? newEventModel;
 
   @override
   State<TodoAddScreen> createState() => _TodoAddScreenState();
 }
 
 class _TodoAddScreenState extends State<TodoAddScreen> {
+  String selectedColor = 'Red';
+  List<String> colors = ['Red', 'Blue', 'Orange'];
   TextEditingController eventNameController = TextEditingController();
-  TextEditingController eventLocationController = TextEditingController();
   TextEditingController eventDescriptionController = TextEditingController();
+  TextEditingController eventLocationController = TextEditingController();
   TextEditingController eventTimeController = TextEditingController();
+
+  @override
+  void initState() {
+    if (widget.newEventModel != null) {
+      eventTimeController.text = widget.newEventModel!.eventTime;
+      eventDescriptionController.text = widget.newEventModel!.eventDescription;
+      eventNameController.text = widget.newEventModel!.eventName;
+      eventLocationController.text = widget.newEventModel!.eventLocation;
+      selectedColor = widget.newEventModel!.eventPriority;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +48,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
       ),
-      body: BlocConsumer<TodoCubit, TodoState>(
+      body: BlocConsumer<TodosBloc, TodoState>(
         listener: (context, state) {
           if (state.status == FormStatus.loading) {
             const Center(
@@ -41,7 +57,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
           }
           if (state.status == FormStatus.failure) {
             if (state.status == FormStatus.failure) {
-              errorDialog(context, state.errorText);
+              errorDialog(context, state.statusText);
             }
           }
         },
@@ -66,11 +82,11 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     ),
                     4.ph,
                     GlobalTextField(
+                      controller: eventNameController,
                       onChanged: (v) {
-                        state.copyWith(eventName: v);
+                        state.copyWith(eventName: v.toString());
                       },
                       hintText: "Event name",
-                      controller: eventNameController,
                     ),
                     16.ph,
                     const Text(
@@ -85,12 +101,12 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                       textAlign: TextAlign.left,
                     ),
                     GlobalTextField(
+                      controller: eventDescriptionController,
                       onChanged: (v) {
-                        state.copyWith(eventDescription: v);
+                        state.copyWith(eventDescription: v.toString());
                       },
                       hintText: "Event description",
                       maxLines: 5,
-                      controller: eventDescriptionController,
                     ),
                     16.ph,
                     const Text(
@@ -106,9 +122,9 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     ),
                     4.ph,
                     GlobalTextField(
+                      controller: eventLocationController,
                       onChanged: (v) {
-                        print(v);
-                        state.copyWith(eventLocation: v);
+                        state.copyWith(eventLocation: v.toString());
                       },
                       suffixIcon: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -116,7 +132,6 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                         child: SvgPicture.asset(AppIcons.location),
                       ),
                       hintText: "Event location",
-                      controller: eventLocationController,
                     ),
                     16.ph,
                     const Text(
@@ -131,7 +146,33 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                       textAlign: TextAlign.left,
                     ),
                     6.ph,
-                    const DropdownItem(),
+                    DropdownButton<String>(
+                      value: selectedColor,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedColor = newValue!;
+                        });
+                      },
+                      items:
+                          colors.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Container(
+                              height: 20,
+                              width: 23,
+                              color: value == "Red"
+                                  ? AppColors.c_EE2B00
+                                  : value == "Blue"
+                                      ? AppColors.c_009FEE
+                                      : AppColors.c_EE8F00,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    16.ph,
                     const Text(
                       "Event time",
                       style: TextStyle(
@@ -145,11 +186,11 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     ),
                     4.ph,
                     GlobalTextField(
+                      controller: eventTimeController,
                       onChanged: (v) {
-                        state.copyWith(eventTime: v);
+                        state.copyWith(eventTime: v.toString());
                       },
                       hintText: "Event time",
-                      controller: eventTimeController,
                     ),
                     150.ph,
                   ],
@@ -169,39 +210,52 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
                       onTap: () {
-                        context.read<TodoCubit>().addTodo(
-                              context,
-                              EventModel(
+                        if (widget.newEventModel == null) {
+                          context.read<TodosBloc>().add(
+                                AddTodo(
+                                  newTodo: EventModel(
+                                    eventLocation: eventLocationController.text,
+                                    eventName: eventNameController.text,
+                                    eventPriority: selectedColor.toString(),
+                                    eventDescription:
+                                        eventDescriptionController.text,
+                                    eventTime: eventTimeController.text,
+                                  ),
+                                ),
+                              );
+                        } else {
+                          context.read<TodosBloc>().add(
+                            UpdateTodo(
+                              updatedTodo: EventModel(
                                 eventLocation: eventLocationController.text,
                                 eventName: eventNameController.text,
-                                eventPriority: "easy",
+                                eventPriority: selectedColor.toString(),
                                 eventDescription:
-                                    eventDescriptionController.text,
+                                eventDescriptionController.text,
                                 eventTime: eventTimeController.text,
                               ),
-                            );
-                        if (state.status == FormStatus.success) {
-                          Navigator.pushReplacementNamed(
-                              context, RouteNames.calendar);
-                        }else{
-                          errorDialog(context, state.errorText);
+                            ),
+                          );
+
                         }
+                        Navigator.pop(context, RouteNames.calendar);
                       },
-                      child: const Center(
+                      child: Center(
                         child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 25, vertical: 13),
-                            child: Text(
-                              "Add",
-                              style: TextStyle(
-                                fontFamily: "Poppins",
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                height: 15 / 10,
-                              ),
-                              textAlign: TextAlign.left,
-                            )),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 25, vertical: 13),
+                          child: Text(
+                            widget.newEventModel == null ? "Add" : "Update",
+                            style: const TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              height: 15 / 10,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
                       ),
                     ),
                   ),

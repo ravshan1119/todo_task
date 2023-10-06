@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/ui/calendar/calendar_screen.dart';
 import 'package:todo_task/ui/details/detail_screen.dart';
 import 'package:todo_task/ui/todo_add/todo_add_screen.dart';
@@ -16,13 +17,21 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (context) => const CalendarScreen(),
         );
-        case RouteNames.todoAdd:
+      case RouteNames.todoAdd:
         return MaterialPageRoute(
           builder: (context) => const TodoAddScreen(),
         );
-        case RouteNames.detail:
+      case RouteNames.detail:
         return MaterialPageRoute(
-          builder: (context) => const DetailScreen(),
+          builder: (context) => DetailScreen(
+            eventModel: EventModel(
+              eventLocation: "",
+              eventName: "",
+              eventPriority: "",
+              eventDescription: "",
+              eventTime: "",
+            ),
+          ),
         );
       default:
         return MaterialPageRoute(

@@ -11,7 +11,12 @@ void errorDialog(BuildContext context, String errorMessage) {
       builder: (context) {
         return CupertinoAlertDialog(
           title: const Text('Error'),
-          content: Text(errorMessage),
+          content: Text(
+            errorMessage,
+            style: const TextStyle(
+              color: Colors.black,
+            ),
+          ),
           actions: [
             CupertinoDialogAction(
               child: const Text('OK'),
@@ -46,38 +51,3 @@ void errorDialog(BuildContext context, String errorMessage) {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
