@@ -48,10 +48,10 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
       ),
-      body: BlocConsumer<TodosBloc, TodoState>(
-        listener: (context, state) {
+      body: BlocBuilder<TodosBloc, TodoState>(
+        builder: (context, state) {
           if (state.status == FormStatus.loading) {
-            const Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -60,8 +60,6 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
               errorDialog(context, state.statusText);
             }
           }
-        },
-        builder: (context, state) {
           return Stack(
             children: [
               Padding(

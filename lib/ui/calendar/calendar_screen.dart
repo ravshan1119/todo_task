@@ -104,7 +104,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body: BlocBuilder<TodosBloc, TodoState>(
         builder: (context, state) {
           if(state.status == FormStatus.loading){
-            const Center(child: CircularProgressIndicator(),);
+            return const Center(child: CircularProgressIndicator(),);
           }
           return ListView(
             children: [
