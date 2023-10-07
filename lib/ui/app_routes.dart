@@ -30,6 +30,7 @@ class AppRoutes {
               eventPriority: "",
               eventDescription: "",
               eventTime: "",
+              day: ""
             ),
           ),
         );
