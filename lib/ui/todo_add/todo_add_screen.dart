@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:todo_task/bloc/todo/todos_bloc.dart';
 import 'package:todo_task/bloc/todo/todos_event.dart';
 import 'package:todo_task/bloc/todo/todos_state.dart';
 import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/ui/app_routes.dart';
 import 'package:todo_task/ui/todo_add/widgets/input.dart';
+import 'package:todo_task/ui/todo_add/widgets/text_field_time.dart';
 import 'package:todo_task/utils/app_colors.dart';
 import 'package:todo_task/utils/app_icons.dart';
 import 'package:todo_task/utils/error_dialog.dart';
 import 'package:todo_task/utils/form_status.dart';
+import 'package:todo_task/utils/fuctions.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
 class TodoAddScreen extends StatefulWidget {
@@ -30,6 +33,7 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
   TextEditingController eventDescriptionController = TextEditingController();
   TextEditingController eventLocationController = TextEditingController();
   TextEditingController eventTimeController = TextEditingController();
+  final MaskTextInputFormatter maskFormatter = maskTimeFormatter;
 
   @override
   void initState() {
@@ -197,7 +201,10 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                       textAlign: TextAlign.left,
                     ),
                     4.ph,
-                    GlobalTextField(
+                    TimeTextField(
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.number,
+                      maskTextInputFormatter: maskTimeFormatter,
                       controller: eventTimeController,
                       onChanged: (v) {
                         state.copyWith(eventTime: v.toString());

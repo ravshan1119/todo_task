@@ -1,3 +1,4 @@
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:todo_task/data/local/local_database.dart';
 
 import '../data/model/event_model.dart';
@@ -32,3 +33,8 @@ bool yellowDot(String day, List<EventModel> events) {
   }
   return false;
 }
+
+final maskTimeFormatter = MaskTextInputFormatter(
+    mask: '##:## - ##:##',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy);
