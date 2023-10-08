@@ -21,6 +21,21 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: AppColors.white),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SvgPicture.asset(AppIcons.arrowLeft),
+            ),
+          ),
+        ),
+        elevation: 0,
         toolbarHeight: 0,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: eventModel.eventPriority == "Blue"
@@ -77,10 +92,15 @@ class DetailScreen extends StatelessWidget {
                             actions: [
                               TextButton(
                                 onPressed: () async {
-
+                                  print(eventModel.id);
                                   context.read<TodosBloc>().add(
                                         DeleteTodo(todoId: eventModel.id!),
                                       );
+                                  const snackBar = SnackBar(
+                                    content: Text('Event Deleted!'),
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
                                   Navigator.pushReplacementNamed(
                                       context, RouteNames.calendar);
                                 },

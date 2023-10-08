@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:todo_task/bloc/todo/todos_bloc.dart';
@@ -45,13 +46,26 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        systemOverlayStyle:
+            SystemUiOverlayStyle(statusBarColor: AppColors.white),
+        backgroundColor: Colors.white,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: AppColors.black,
+            )),
+        elevation: 0,
         scrolledUnderElevation: 0,
       ),
-      body: BlocConsumer<TodosBloc, TodoState>(
-        listener: (context, state) {
+      body: BlocBuilder<TodosBloc, TodosState>(
+        builder: (context, state) {
           if (state.status == FormStatus.loading) {
-            const Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
@@ -60,8 +74,6 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
               errorDialog(context, state.statusText);
             }
           }
-        },
-        builder: (context, state) {
           return Stack(
             children: [
               Padding(
@@ -210,35 +222,62 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
                       onTap: () {
-                        if (widget.newEventModel == null) {
+                        if (widget.newEventModel == null &&
+                            eventLocationController.text.isNotEmpty &&
+                            eventNameController.text.isNotEmpty &&
+                            eventDescriptionController.text.isNotEmpty &&
+                            eventTimeController.text.isNotEmpty) {
+                          const snackBar = SnackBar(
+                            content: Text('Add Event!'),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           context.read<TodosBloc>().add(
                                 AddTodo(
                                   newTodo: EventModel(
+                                      eventLocation:
+                                          eventLocationController.text,
+                                      eventName: eventNameController.text,
+                                      eventPriority: selectedColor.toString(),
+                                      eventDescription:
+                                          eventDescriptionController.text,
+                                      eventTime: eventTimeController.text,
+                                      day:
+                                          "${DateTime.now().day}.${DateTime.now().month}"),
+                                ),
+                              );
+
+                          Navigator.pop(context);
+                        } else if (eventLocationController.text.isNotEmpty &&
+                            eventNameController.text.isNotEmpty &&
+                            eventDescriptionController.text.isNotEmpty &&
+                            eventTimeController.text.isNotEmpty) {
+                          const snackBar = SnackBar(
+                            content: Text('Event Updated!'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          context.read<TodosBloc>().add(
+                                UpdateTodo(
+                                  updatedTodo: EventModel(
+                                    id: widget.newEventModel!.id,
                                     eventLocation: eventLocationController.text,
                                     eventName: eventNameController.text,
                                     eventPriority: selectedColor.toString(),
                                     eventDescription:
                                         eventDescriptionController.text,
                                     eventTime: eventTimeController.text,
+                                    day: widget.newEventModel!.day,
                                   ),
                                 ),
                               );
+                          Navigator.pushReplacementNamed(
+                              context, RouteNames.calendar);
                         } else {
-                          context.read<TodosBloc>().add(
-                            UpdateTodo(
-                              updatedTodo: EventModel(
-                                eventLocation: eventLocationController.text,
-                                eventName: eventNameController.text,
-                                eventPriority: selectedColor.toString(),
-                                eventDescription:
-                                eventDescriptionController.text,
-                                eventTime: eventTimeController.text,
-                              ),
-                            ),
+                          const snackBar = SnackBar(
+                            content: Text('The field is not full!'),
                           );
-
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         }
-                        Navigator.pop(context, RouteNames.calendar);
                       },
                       child: Center(
                         child: Padding(

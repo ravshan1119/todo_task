@@ -1,17 +1,16 @@
-import 'package:equatable/equatable.dart';
 import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/utils/form_status.dart';
 
-class TodoState extends Equatable {
-  const TodoState({
-    required this.status,
+class TodosState {
+  TodosState({
     required this.todos,
+    required this.eventDescription,
+    required this.status,
+    required this.eventPriority,
+    required this.eventLocation,
+    required this.eventName,
+    required this.eventTime,
     required this.statusText,
-    this.eventPriority = "",
-    this.eventLocation = "",
-    this.eventDescription = "",
-    this.eventTime = "",
-    this.eventName = "",
   });
 
   final FormStatus status;
@@ -23,35 +22,25 @@ class TodoState extends Equatable {
   final String eventLocation;
   final String eventPriority;
 
-  TodoState copyWith({
-    FormStatus? status,
+  TodosState copyWith({
     String? statusText,
-    List<EventModel>? todos,
     String? eventName,
     String? eventDescription,
-    String? eventLocation,
     String? eventTime,
+    String? eventLocation,
     String? eventPriority,
-  }) =>
-      TodoState(
-        status: status ?? this.status,
-        todos: todos ?? this.todos,
-        statusText: statusText ?? this.statusText,
-        eventTime: eventTime ?? this.eventTime,
-        eventName: eventName ?? this.eventName,
-        eventDescription: eventDescription ?? this.eventDescription,
-        eventLocation: eventLocation ?? this.eventLocation,
-        eventPriority: eventPriority ?? this.eventPriority,
-      );
-
-  @override
-  List<Object?> get props => [
-        status,
-        todos,
-        eventPriority,
-        eventLocation,
-        eventDescription,
-        eventName,
-        eventTime
-      ];
+    FormStatus? status,
+    List<EventModel>? todos,
+  }) {
+    return TodosState(
+      todos: todos ?? this.todos,
+      eventDescription: eventDescription ?? this.eventDescription,
+      status: status ?? this.status,
+      eventPriority: eventPriority ?? this.eventPriority,
+      eventLocation: eventLocation ?? this.eventLocation,
+      eventName: eventName ?? this.eventName,
+      eventTime: eventTime ?? this.eventTime,
+      statusText: statusText ?? this.statusText,
+    );
+  }
 }

@@ -41,7 +41,8 @@ class LocalDatabase {
     ${EventModelFields.eventDescription} $textType,
     ${EventModelFields.eventLocation} $textType,
     ${EventModelFields.eventPriority} $textType,
-    ${EventModelFields.eventTime} $textType
+    ${EventModelFields.eventTime} $textType,
+    ${EventModelFields.day} $textType
     )
     ''');
 
@@ -52,6 +53,8 @@ class LocalDatabase {
     final db = await getInstance.database;
     final int id =
         await db.insert(EventModelFields.eventTable, eventModel.toJson());
+    print("ID:  $id");
+    eventModel.id = id;
     return eventModel.copyWith(id: id);
   }
 

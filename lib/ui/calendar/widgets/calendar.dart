@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/utils/app_colors.dart';
 import 'package:todo_task/utils/app_icons.dart';
+import 'package:todo_task/utils/fuctions.dart';
 import 'package:todo_task/utils/size_extantion.dart';
 
 const Duration _monthScrollDuration = Duration(milliseconds: 200);
@@ -861,7 +863,7 @@ class _DayPickerState extends State<_DayPicker> {
             DateUtils.isSameDay(widget.currentDate, dayToBuild);
 
         dayItems.add(
-          _Day(
+          Day(
             dayToBuild,
             key: ValueKey<DateTime>(dayToBuild),
             isDisabled: isDisabled,
@@ -890,8 +892,8 @@ class _DayPickerState extends State<_DayPicker> {
   }
 }
 
-class _Day extends StatefulWidget {
-  const _Day(
+class Day extends StatefulWidget {
+  Day(
     this.day, {
     super.key,
     required this.isDisabled,
@@ -908,15 +910,34 @@ class _Day extends StatefulWidget {
   final ValueChanged<DateTime> onChanged;
   final FocusNode? focusNode;
 
+  int sqlDay = 0;
+
   @override
-  State<_Day> createState() => _DayState();
+  State<Day> createState() => _DayState();
 }
 
-class _DayState extends State<_Day> {
+class _DayState extends State<Day> {
   final MaterialStatesController _statesController = MaterialStatesController();
+  List<EventModel> events = [];
+
+  _init() async {
+    events = await getEventFromLocalDatabase();
+  }
+
+  int getSqlDay() {
+    return widget.sqlDay;
+  }
+
+  @override
+  void initState() {
+    _init();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    _init();
+
     final DatePickerThemeData defaults = DatePickerTheme.defaults(context);
     final DatePickerThemeData datePickerTheme = DatePickerTheme.of(context);
     final TextStyle? dayStyle = datePickerTheme.dayStyle ?? defaults.dayStyle;
@@ -975,7 +996,6 @@ class _DayState extends State<_Day> {
             color: dayBackgroundColor,
             shape: BoxShape.circle,
           );
-
     Widget dayWidget = Container(
       decoration: decoration,
       child: Center(
@@ -983,22 +1003,30 @@ class _DayState extends State<_Day> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(localizations.formatDecimal(widget.day.day),
-                style: const TextStyle(
-                  fontFamily: "Poppins",
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xff292929),
-                  height: 18 / 12,
-                ).apply(color: dayForegroundColor)),
+            Text(
+              localizations.formatDecimal(widget.day.day),
+              style: const TextStyle(
+                fontFamily: "Poppins",
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Color(0xff292929),
+                height: 18 / 12,
+              ).apply(color: dayForegroundColor),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(AppIcons.blueDot),
+                blueDot("${widget.day.day}.${widget.day.month}", events)
+                    ? SvgPicture.asset(AppIcons.blueDot)
+                    : const SizedBox(),
                 4.pw,
-                SvgPicture.asset(AppIcons.redDot),
+                redDot("${widget.day.day}.${widget.day.month}", events)
+                    ? SvgPicture.asset(AppIcons.redDot)
+                    : const SizedBox(),
                 4.pw,
-                SvgPicture.asset(AppIcons.yellowDot),
+                yellowDot("${widget.day.day}.${widget.day.month}", events)
+                    ? SvgPicture.asset(AppIcons.yellowDot)
+                    : const SizedBox(),
               ],
             )
           ],
@@ -1013,7 +1041,12 @@ class _DayState extends State<_Day> {
     } else {
       dayWidget = InkResponse(
         focusNode: widget.focusNode,
-        onTap: () => widget.onChanged(widget.day),
+        onTap: () {
+          setState(() {
+            widget.sqlDay = widget.day.day;
+          });
+          return widget.onChanged(widget.day);
+        },
         radius: _dayPickerRowHeight / 2 + 4,
         statesController: _statesController,
         overlayColor: dayOverlayColor,

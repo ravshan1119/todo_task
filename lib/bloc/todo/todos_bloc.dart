@@ -5,10 +5,10 @@ import 'package:todo_task/data/local/local_database.dart';
 import 'package:todo_task/data/model/event_model.dart';
 import 'package:todo_task/utils/form_status.dart';
 
-class TodosBloc extends Bloc<TodosEvent, TodoState> {
+class TodosBloc extends Bloc<TodosEvent, TodosState> {
   TodosBloc()
       : super(
-          const TodoState(
+          TodosState(
             status: FormStatus.pure,
             todos: [],
             eventName: "",
@@ -25,10 +25,11 @@ class TodosBloc extends Bloc<TodosEvent, TodoState> {
     on<DeleteTodo>(_deleteTodo);
   }
 
-  _addTodo(AddTodo event, Emitter<TodoState> emit) async {
+  _addTodo(AddTodo event, Emitter<TodosState> emit) async {
     emit(state.copyWith(
         status: FormStatus.loading, statusText: "Adding Todo...!"));
     LocalDatabase.getInstance;
+
     LocalDatabase.insertTodo(event.newTodo);
     emit(state.copyWith(
         status: FormStatus.success,
@@ -36,7 +37,7 @@ class TodosBloc extends Bloc<TodosEvent, TodoState> {
         todos: [...state.todos, event.newTodo]));
   }
 
-  _getTodos(GetTodo event, Emitter<TodoState> emit) async {
+  _getTodos(GetTodo event, Emitter<TodosState> emit) async {
     emit(state.copyWith(
         status: FormStatus.loading, statusText: "Getting Todos!"));
     List<EventModel> todos = await LocalDatabase.getAllTodos();
@@ -47,7 +48,7 @@ class TodosBloc extends Bloc<TodosEvent, TodoState> {
         todos: todos));
   }
 
-  _updateTodo(UpdateTodo event, Emitter<TodoState> emit) async {
+  _updateTodo(UpdateTodo event, Emitter<TodosState> emit) async {
     emit(state.copyWith(
         status: FormStatus.loading, statusText: "Update Todo...!"));
     LocalDatabase.updateTodo(eventModel: event.updatedTodo);
@@ -56,7 +57,7 @@ class TodosBloc extends Bloc<TodosEvent, TodoState> {
         statusText: "Updated Todo!", status: FormStatus.success, todos: todos));
   }
 
-  _deleteTodo(DeleteTodo event, Emitter<TodoState> emit) async {
+  _deleteTodo(DeleteTodo event, Emitter<TodosState> emit) async {
     emit(
       state.copyWith(
         status: FormStatus.loading,

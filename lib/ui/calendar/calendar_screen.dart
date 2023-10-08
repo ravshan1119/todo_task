@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:todo_task/bloc/todo/todos_bloc.dart';
@@ -49,9 +50,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("build calendar screen");
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarColor: Colors.white),
+        backgroundColor: Colors.white,
+        elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
         toolbarHeight: 72,
@@ -74,10 +79,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    DateTime.now().toString(),
+                    "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
                     style: TextStyle(
                       fontFamily: "Poppins",
-                      fontSize: 10,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
                       color: AppColors.c_292929,
                       height: 15 / 10,
@@ -91,8 +96,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       setState(() {});
                     },
                     child: isVisible
-                        ? const Icon(Icons.keyboard_arrow_up)
-                        : const Icon(Icons.keyboard_arrow_down),
+                        ? const Icon(
+                            Icons.keyboard_arrow_up,
+                            color: Colors.black,
+                          )
+                        : const Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.black,
+                          ),
                   )
                 ],
               ),
@@ -101,10 +112,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ),
         actions: [SvgPicture.asset(AppIcons.notification), 28.pw],
       ),
-      body: BlocBuilder<TodosBloc, TodoState>(
+      body: BlocBuilder<TodosBloc, TodosState>(
         builder: (context, state) {
-          if(state.status == FormStatus.loading){
-            const Center(child: CircularProgressIndicator(),);
+          if (state.status == FormStatus.loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
           return ListView(
             children: [
@@ -173,41 +186,43 @@ class _CalendarScreenState extends State<CalendarScreen> {
               18.ph,
               ...List.generate(
                 state.todos.length,
-                (index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 28),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DetailScreen(eventModel: state.todos[index]),
-                        ),
-                      );
-                    },
-                    child: TodoItem(
-                      textColor: state.todos[index].eventPriority == "Blue"
-                          ? AppColors.c_056ea2
-                          : state.todos[index].eventPriority == "Orange"
-                              ? AppColors.c_b86e00
-                              : AppColors.c_c02200,
-                      subColor: state.todos[index].eventPriority == "Blue"
-                          ? AppColors.c_C6E6F6
-                          : state.todos[index].eventPriority == "Orange"
-                              ? AppColors.c_F6E3C6
-                              : AppColors.c_F6CFC6,
-                      color: state.todos[index].eventPriority == "Blue"
-                          ? AppColors.c_009FEE
-                          : state.todos[index].eventPriority == "Orange"
-                              ? AppColors.c_EE8F00
-                              : AppColors.c_EE2B00,
-                      title: state.todos[index].eventName,
-                      subTitle: state.todos[index].eventDescription,
-                      time: state.todos[index].eventTime,
-                      location: state.todos[index].eventLocation,
+                (index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 28),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DetailScreen(eventModel: state.todos[index]),
+                          ),
+                        );
+                      },
+                      child: TodoItem(
+                        textColor: state.todos[index].eventPriority == "Blue"
+                            ? AppColors.c_056ea2
+                            : state.todos[index].eventPriority == "Orange"
+                                ? AppColors.c_b86e00
+                                : AppColors.c_c02200,
+                        subColor: state.todos[index].eventPriority == "Blue"
+                            ? AppColors.c_C6E6F6
+                            : state.todos[index].eventPriority == "Orange"
+                                ? AppColors.c_F6E3C6
+                                : AppColors.c_F6CFC6,
+                        color: state.todos[index].eventPriority == "Blue"
+                            ? AppColors.c_009FEE
+                            : state.todos[index].eventPriority == "Orange"
+                                ? AppColors.c_EE8F00
+                                : AppColors.c_EE2B00,
+                        title: state.todos[index].eventName,
+                        subTitle: state.todos[index].eventDescription,
+                        time: state.todos[index].eventTime,
+                        location: state.todos[index].eventLocation,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               )
             ],
           );
