@@ -230,14 +230,6 @@ class _TodoAddScreenState extends State<TodoAddScreen> {
                           const snackBar = SnackBar(
                             content: Text('Add Event!'),
                           );
-                          print(EventModel(
-                              eventLocation: eventLocationController.text,
-                              eventName: eventNameController.text,
-                              eventPriority: selectedColor.toString(),
-                              eventDescription: eventDescriptionController.text,
-                              eventTime: eventTimeController.text,
-                              day:
-                                  "${DateTime.now().day}.${DateTime.now().month}"));
 
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           context.read<TodosBloc>().add(
